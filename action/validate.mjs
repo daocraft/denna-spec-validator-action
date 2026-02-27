@@ -24,7 +24,14 @@ const ajv = new Ajv({
       }
     }
 
-    const response = await fetch(uri);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+    let response;
+    try {
+      response = await fetch(uri, { signal: controller.signal });
+    } finally {
+      clearTimeout(timeout);
+    }
     if (!response.ok) {
       throw new Error(`Failed to fetch schema: ${uri} (${response.status})`);
     }
@@ -92,6 +99,8 @@ async function loadAndCompileSchema(schemaPath) {
   return ajv.compile(processed);
 }
 
+const remoteSchemaCache = new Map();
+
 async function main() {
   const files = [];
   for (const pattern of patterns) {
@@ -157,7 +166,11 @@ async function main() {
       if (ref.type === 'local') {
         validate = await loadAndCompileSchema(ref.path);
       } else {
-        validate = await ajv.compileAsync({ $ref: ref.uri });
+        if (!remoteSchemaCache.has(ref.uri)) {
+          console.log(`Fetching schema: ${ref.uri}`);
+          remoteSchemaCache.set(ref.uri, await ajv.compileAsync({ $ref: ref.uri }));
+        }
+        validate = remoteSchemaCache.get(ref.uri);
       }
 
       const valid = validate(fileContent);
