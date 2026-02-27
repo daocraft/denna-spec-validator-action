@@ -1,3 +1,9 @@
+## [1.0.4](https://github.com/daocraft/denna-spec-validator-action/compare/v1.0.3...v1.0.4) (2026-02-27)
+
+### Bug Fixes
+
+* 🐛 replace fetch with curl ([f914c8c](https://github.com/daocraft/denna-spec-validator-action/commit/f914c8caff6757d72000a629b4afceb1b8e08512))
+
 ## [1.0.3](https://github.com/daocraft/denna-spec-validator-action/compare/v1.0.2...v1.0.3) (2026-02-27)
 
 ### Bug Fixes
