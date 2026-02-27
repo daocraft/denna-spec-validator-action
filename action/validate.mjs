@@ -9,30 +9,38 @@ const patterns = (process.env.INPUT_PATTERNS || '**/*.denna-spec.json').split('\
 const excludePatterns = (process.env.INPUT_EXCLUDE || '').split('\n').map(p => p.trim()).filter(Boolean);
 const strict = process.env.INPUT_STRICT === 'true';
 
+const loadSchemaCache = new Map();
+
 const ajv = new Ajv({
   allErrors: true,
   strict: false,
-  loadSchema: async (uri) => {
-    if (uri.startsWith('https://spec.denna.io/')) {
-      const schemaPath = join(
-        process.env.GITHUB_ACTION_PATH || dirname(new URL(import.meta.url).pathname),
-        '..',
-        'docs',
-        uri.replace('https://spec.denna.io/', '')
-      );
-      if (existsSync(schemaPath)) {
-        return JSON.parse(readFileSync(schemaPath, 'utf-8'));
-      }
-    }
+  loadSchema: (uri) => {
+    if (!loadSchemaCache.has(uri)) {
+      loadSchemaCache.set(uri, (async () => {
+        if (uri.startsWith('https://spec.denna.io/')) {
+          const schemaPath = join(
+            process.env.GITHUB_ACTION_PATH || dirname(new URL(import.meta.url).pathname),
+            '..',
+            'docs',
+            uri.replace('https://spec.denna.io/', '')
+          );
+          if (existsSync(schemaPath)) {
+            return JSON.parse(readFileSync(schemaPath, 'utf-8'));
+          }
+        }
 
-    const result = spawnSync('curl', ['--silent', '--show-error', '--fail', '--location', '--ipv4', '--http1.1', '--connect-timeout', '10', '--max-time', '20', uri], {
-      encoding: 'utf-8',
-      timeout: 20000,
-    });
-    if (result.error || result.status !== 0) {
-      throw new Error(`Failed to fetch schema: ${uri} — ${result.stderr || result.error?.message}`);
+        console.log(`  Loading dependency: ${uri}`);
+        const result = spawnSync('curl', ['--silent', '--show-error', '--fail', '--location', '--ipv4', '--http1.1', '--connect-timeout', '10', '--max-time', '20', uri], {
+          encoding: 'utf-8',
+          timeout: 25000,
+        });
+        if (result.error || result.status !== 0) {
+          throw new Error(`Failed to fetch schema: ${uri} — ${result.stderr || result.error?.message}`);
+        }
+        return JSON.parse(result.stdout);
+      })());
     }
-    return JSON.parse(result.stdout);
+    return loadSchemaCache.get(uri);
   }
 });
 addFormats(ajv);
