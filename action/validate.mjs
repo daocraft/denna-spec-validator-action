@@ -2,7 +2,7 @@ import { readFileSync, existsSync, appendFileSync } from 'fs';
 import { resolve, dirname, join } from 'path';
 import { spawnSync } from 'child_process';
 import { glob } from 'glob';
-import Ajv from 'ajv';
+import Ajv2020 from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
 
 const patterns = (process.env.INPUT_PATTERNS || '**/*.denna-spec.json').split('\n').map(p => p.trim()).filter(Boolean);
@@ -11,7 +11,7 @@ const strict = process.env.INPUT_STRICT === 'true';
 
 const loadSchemaCache = new Map();
 
-const ajv = new Ajv({
+const ajv = new Ajv2020({
   allErrors: true,
   strict: false,
   loadSchema: (uri) => {
