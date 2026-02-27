@@ -1,3 +1,9 @@
+## [1.0.6](https://github.com/daocraft/denna-spec-validator-action/compare/v1.0.5...v1.0.6) (2026-02-27)
+
+### Bug Fixes
+
+* 🐛 cache promise and add logs to identify fetching issue ([70d0c9c](https://github.com/daocraft/denna-spec-validator-action/commit/70d0c9c74a8304876bc8e9a7e36d44039c6c7c88))
+
 ## [1.0.5](https://github.com/daocraft/denna-spec-validator-action/compare/v1.0.4...v1.0.5) (2026-02-27)
 
 ### Bug Fixes

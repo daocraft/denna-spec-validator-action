@@ -1,6 +1,6 @@
 {
   "name": "denna-spec-validator-action",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "GitHub Action to validate .denna-spec.json files against their declared JSON Schemas",
   "repository": {
     "type": "git",
