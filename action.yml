@@ -1,0 +1,47 @@
+name: 'Denna Spec Validator'
+description: 'Validate .denna-spec.json files against their declared JSON Schemas'
+branding:
+  icon: 'check-circle'
+  color: 'blue'
+
+inputs:
+  patterns:
+    description: 'Glob pattern(s) to find .denna-spec.json files. Separate multiple patterns with newlines.'
+    required: false
+    default: '**/*.denna-spec.json'
+  exclude:
+    description: 'Glob pattern(s) to exclude. Separate multiple patterns with newlines.'
+    required: false
+    default: '**/_template/**'
+  strict:
+    description: 'Fail on any validation warning (not just errors).'
+    required: false
+    default: 'false'
+
+outputs:
+  validated:
+    description: 'Number of files that passed validation.'
+    value: ${{ steps.validate.outputs.validated }}
+  failed:
+    description: 'Number of files that failed validation.'
+    value: ${{ steps.validate.outputs.failed }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v2
+
+    - name: Install validator dependencies
+      shell: bash
+      run: bun add ajv@8 ajv-formats@3 glob@11
+      working-directory: ${{ github.action_path }}
+
+    - name: Run validation
+      id: validate
+      shell: bash
+      env:
+        INPUT_PATTERNS: ${{ inputs.patterns }}
+        INPUT_EXCLUDE: ${{ inputs.exclude }}
+        INPUT_STRICT: ${{ inputs.strict }}
+      run: node ${{ github.action_path }}/action/validate.mjs
