@@ -44,4 +44,4 @@ runs:
         INPUT_PATTERNS: ${{ inputs.patterns }}
         INPUT_EXCLUDE: ${{ inputs.exclude }}
         INPUT_STRICT: ${{ inputs.strict }}
-      run: node ${{ github.action_path }}/action/validate.mjs
+      run: bun run ${{ github.action_path }}/action/validate.mjs
