@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec.denna.io/v1/repository.schema.json",
+  "title": "io.denna.repository",
+  "description": "Repository manifest for Denna Spec parameter repositories. Declares the repo's version, release strategy, and an explicit list of all data files it contains.",
+  "type": "object",
+  "required": ["$schema", "metadata", "repository"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "metadata": {
+      "allOf": [
+        { "$ref": "https://spec.denna.io/v1/denna-types.schema.json#/$defs/metadata" },
+        {
+          "required": ["id", "name", "kind", "version"],
+          "properties": {
+            "kind": {
+              "const": "io.denna.repository"
+            },
+            "version": {
+              "type": "string",
+              "pattern": "^\\d+\\.\\d+\\.\\d+$"
+            }
+          }
+        }
+      ]
+    },
+    "repository": {
+      "type": "object",
+      "required": ["release", "entries"],
+      "additionalProperties": false,
+      "properties": {
+        "release": {
+          "type": "object",
+          "required": ["strategy", "convention"],
+          "additionalProperties": false,
+          "properties": {
+            "strategy": {
+              "type": "string",
+              "enum": ["semver"]
+            },
+            "convention": {
+              "type": "string",
+              "enum": ["conventional-commits"]
+            }
+          }
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[^/].*\\.denna-spec\\.json$"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    }
+  }
+}

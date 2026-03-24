@@ -1,0 +1,18 @@
+{
+  "$schema": "https://spec.denna.io/v1/repository.schema.json",
+  "metadata": {
+    "id": "mismatch-repo",
+    "kind": "io.denna.repository",
+    "name": "Mismatch Repo",
+    "version": "1.0.0"
+  },
+  "repository": {
+    "release": {
+      "strategy": "semver",
+      "convention": "conventional-commits"
+    },
+    "entries": [
+      "found.denna-spec.json"
+    ]
+  }
+}

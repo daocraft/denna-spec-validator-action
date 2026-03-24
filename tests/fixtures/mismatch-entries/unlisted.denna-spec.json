@@ -1,0 +1,4 @@
+{
+  "$schema": "https://spec.denna.io/v1/defi/rates.schema.json",
+  "metadata": { "kind": "io.denna.defi.rates" }
+}
