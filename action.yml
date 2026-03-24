@@ -17,6 +17,10 @@ inputs:
     description: 'Fail on any validation warning (not just errors).'
     required: false
     default: 'false'
+  require-manifest:
+    description: 'Require denna-repo.denna-spec.json at repo root. When true, fails if manifest is missing.'
+    required: false
+    default: 'false'
 
 outputs:
   validated:
@@ -44,4 +48,5 @@ runs:
         INPUT_PATTERNS: ${{ inputs.patterns }}
         INPUT_EXCLUDE: ${{ inputs.exclude }}
         INPUT_STRICT: ${{ inputs.strict }}
+        INPUT_REQUIRE_MANIFEST: ${{ inputs.require-manifest }}
       run: timeout 120 bun run ${{ github.action_path }}/action/validate.mjs

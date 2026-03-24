@@ -4,10 +4,12 @@ import { spawnSync } from 'child_process';
 import { glob } from 'glob';
 import Ajv2020 from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
+import { loadManifest, reconcileEntries, MANIFEST_FILENAME } from './manifest.mjs';
 
 const patterns = (process.env.INPUT_PATTERNS || '**/*.denna-spec.json').split('\n').map(p => p.trim()).filter(Boolean);
 const excludePatterns = (process.env.INPUT_EXCLUDE || '').split('\n').map(p => p.trim()).filter(Boolean);
 const strict = process.env.INPUT_STRICT === 'true';
+const requireManifest = process.env.INPUT_REQUIRE_MANIFEST === 'true';
 
 const loadSchemaCache = new Map();
 
@@ -132,6 +134,37 @@ async function main() {
   let validated = 0;
   let failed = 0;
   const errors = [];
+
+  // --- Manifest check ---
+  const cwd = process.cwd();
+  const manifest = loadManifest(cwd);
+
+  if (requireManifest && !manifest) {
+    console.log(`FAIL: ${MANIFEST_FILENAME} is required but was not found at repo root.\n`);
+    failed++;
+    errors.push({ file: MANIFEST_FILENAME, error: 'Manifest required but not found' });
+  }
+
+  if (manifest) {
+    const relativePaths = uniqueFiles
+      .map(f => f.replace(cwd + '/', ''))
+      .filter(f => f !== MANIFEST_FILENAME);
+
+    const reconcileErrors = reconcileEntries(manifest, relativePaths);
+    if (reconcileErrors.length > 0) {
+      console.log(`FAIL: ${MANIFEST_FILENAME} entries mismatch:`);
+      for (const err of reconcileErrors) {
+        console.log(`  ${err}`);
+      }
+      console.log('');
+      failed += reconcileErrors.length;
+      for (const err of reconcileErrors) {
+        errors.push({ file: MANIFEST_FILENAME, error: err });
+      }
+    } else {
+      console.log(`PASS: ${MANIFEST_FILENAME} entries are consistent.\n`);
+    }
+  }
 
   for (const filePath of uniqueFiles) {
     const relativePath = filePath.replace(process.cwd() + '/', '');
