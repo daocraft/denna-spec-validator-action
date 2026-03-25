@@ -1,3 +1,14 @@
+## [1.1.0](https://github.com/daocraft/denna-spec-validator-action/compare/v1.0.7...v1.1.0) (2026-03-25)
+
+### Features
+
+* add manifest module with loadManifest and reconcileEntries ([76a308a](https://github.com/daocraft/denna-spec-validator-action/commit/76a308ad619e5fcba3a10a1aa3b1937320cc0c55))
+* add require-manifest input and entries consistency check ([afbbad6](https://github.com/daocraft/denna-spec-validator-action/commit/afbbad697e9c2fc064e8da7708e2e5bef084db96))
+
+### Bug Fixes
+
+* added gitignore ([c1a4e7b](https://github.com/daocraft/denna-spec-validator-action/commit/c1a4e7bad1ac814f11f965f867acdd6e2ec4adcd))
+
 ## [1.0.7](https://github.com/daocraft/denna-spec-validator-action/compare/v1.0.6...v1.0.7) (2026-02-27)
 
 ### Bug Fixes
